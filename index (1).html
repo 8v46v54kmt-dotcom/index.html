@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmaLink CI — Trouvez vos médicaments en Côte d'Ivoire</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #0d9e6e;
+  --green-dark: #076b4a;
+  --green-light: #e6f7f1;
+  --green-mid: #b6e8d6;
+  --amber-light: #fef3c7;
+  --blue-light: #eff6ff;
+  --text: #0f1f17;
+  --text-2: #4b6358;
+  --text-3: #8aaa9a;
+  --border: #d8ece4;
+  --surface: #f4faf7;
+  --white: #ffffff;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-lg: 24px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 70px; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: box-shadow .3s; }
+nav.scrolled { box-shadow: 0 4px 24px rgba(13,158,110,.1); }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo-icon { width: 38px; height: 38px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.nav-logo-icon svg { width: 22px; height: 22px; color: white; }
+.nav-logo-text { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--text); }
+.nav-logo-text span { color: var(--green); }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--green); }
+.nav-cta { background: var(--green); color: white; padding: 10px 22px; border-radius: 50px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background .2s; white-space: nowrap; }
+.nav-cta:hover { background: var(--green-dark); }
+.nav-toggle { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; }
+.nav-toggle span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; }
+
+/* HERO */
+.hero { min-height: 100vh; padding: 120px 5vw 80px; display: flex; align-items: center; background: linear-gradient(135deg, #f4faf7 0%, #e6f7f1 50%, #f4faf7 100%); position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -200px; right: -200px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(13,158,110,.08) 0%, transparent 70%); pointer-events: none; }
+.hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; width: 100%; }
+.hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--green-light); border: 1px solid var(--green-mid); border-radius: 50px; padding: 6px 16px; font-size: 13px; font-weight: 600; color: var(--green-dark); margin-bottom: 24px; }
+.hero-badge span { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 60px); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+.hero h1 em { font-style: italic; color: var(--green); }
+.hero p { font-size: 18px; color: var(--text-2); line-height: 1.7; margin-bottom: 36px; max-width: 480px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: white; padding: 15px 28px; border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,158,110,.3); }
+.btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--green); padding: 15px 28px; border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; border: 1.5px solid var(--green); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .2s; }
+.btn-secondary:hover { background: var(--green-light); }
+.hero-visual { position: relative; }
+.hero-card { background: white; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 24px 64px rgba(13,158,110,.12), 0 0 0 1px rgba(13,158,110,.08); }
+.hero-card-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; margin-bottom: 16px; }
+.hero-stat { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--surface); border-radius: var(--radius-sm); margin-bottom: 10px; }
+.hero-stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.hero-stat h4 { font-size: 14px; font-weight: 600; }
+.hero-stat p { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.floating-pill { position: absolute; background: white; border-radius: 50px; padding: 10px 16px; box-shadow: 0 8px 28px rgba(0,0,0,.1); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.floating-pill.top { top: -16px; right: -10px; color: var(--green); }
+.floating-pill.bot { bottom: -16px; left: -10px; color: #92400e; }
+
+/* SECTIONS */
+section { padding: 100px 5vw; }
+.container { max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 12px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 12px; }
+.section-title { font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+.section-title em { font-style: italic; color: var(--green); }
+.section-sub { font-size: 17px; color: var(--text-2); line-height: 1.7; max-width: 560px; }
+.section-head { margin-bottom: 56px; }
+.section-head.center { text-align: center; }
+.section-head.center .section-sub { margin: 0 auto; }
+
+/* SERVICES */
+.bg-surface { background: var(--surface); }
+.svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+.svc-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; cursor: pointer; transition: all .25s; position: relative; overflow: hidden; }
+.svc-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--green-light), transparent); opacity: 0; transition: opacity .3s; pointer-events: none; }
+.svc-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(13,158,110,.12); }
+.svc-card:hover::after { opacity: 1; }
+.svc-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 20px; position: relative; z-index: 1; }
+.svc-icon.g { background: var(--green-light); }
+.svc-icon.a { background: var(--amber-light); }
+.svc-icon.b { background: var(--blue-light); }
+.svc-card h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin-bottom: 10px; position: relative; z-index: 1; }
+.svc-card p { font-size: 14px; color: var(--text-2); line-height: 1.6; position: relative; z-index: 1; }
+.svc-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 20px; position: relative; z-index: 1; transition: gap .2s; }
+.svc-card:hover .svc-link { gap: 10px; }
+
+/* STEPS */
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; }
+.step-card { text-align: center; }
+.step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--green); color: white; font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.step-card h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+.step-card p { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+
+/* SEARCH SECTION */
+.bg-dark { background: linear-gradient(135deg, #0f1f17 0%, #1a3328 100%); }
+.bg-dark .section-label { color: var(--green-mid); }
+.bg-dark .section-title { color: white; }
+.bg-dark .section-sub { color: rgba(255,255,255,.65); }
+.search-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.search-form { background: white; border-radius: var(--radius-lg); padding: 36px; }
+.tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+.tab { padding: 9px 20px; border-radius: 50px; font-size: 14px; font-weight: 500; border: 1.5px solid var(--border); background: white; cursor: pointer; color: var(--text-2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
+.tab.active { background: var(--green); color: white; border-color: var(--green); }
+.field { margin-bottom: 14px; }
+.field label { font-size: 12px; font-weight: 600; color: var(--text-2); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+.inp { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; color: var(--text); background: var(--surface); transition: border-color .2s; }
+.inp:focus { border-color: var(--green); background: white; }
+.photo-area { border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 20px; text-align: center; cursor: pointer; background: var(--surface); transition: all .2s; }
+.photo-area:hover { border-color: var(--green); background: var(--green-light); }
+.photo-area svg { width: 26px; height: 26px; color: var(--text-3); margin-bottom: 8px; }
+.photo-area p { font-size: 13px; color: var(--text-2); }
+.photo-area small { font-size: 11px; color: var(--text-3); }
+.add-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 50px; padding: 13px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; transition: background .2s; }
+.add-btn:hover { background: var(--green-dark); }
+.prod-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; }
+.prod-num { width: 24px; height: 24px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 2px; }
+.prod-del { width: 26px; height: 26px; border: none; background: #fee2e2; border-radius: 50%; cursor: pointer; color: #b91c1c; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+.client-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; margin-top: 16px; }
+.client-box h4 { font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+.wa-btn { width: 100%; background: #25D366; color: white; border: none; border-radius: 50px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; transition: all .2s; }
+.wa-btn:hover { background: #1da851; transform: translateY(-1px); }
+
+/* CONSEIL */
+.conseil-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.disclaimer { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 24px; }
+.dis-head { background: var(--green); padding: 14px 20px; display: flex; align-items: center; gap: 10px; }
+.dis-head span { font-weight: 600; color: white; font-size: 14px; }
+.dis-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.dis-point { display: flex; align-items: flex-start; gap: 12px; }
+.dis-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.dis-num.r { background: #fee2e2; color: #b91c1c; }
+.dis-num.a { background: var(--amber-light); color: #92400e; }
+.dis-num.g { background: var(--green-light); color: var(--green-dark); }
+.dis-point p { font-size: 14px; color: var(--text-2); line-height: 1.55; }
+.pro-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; box-shadow: 0 8px 32px rgba(13,158,110,.08); }
+.pro-avatar { width: 72px; height: 72px; background: linear-gradient(135deg, var(--green), var(--green-dark)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: white; margin-bottom: 16px; }
+.pro-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.pro-title { font-size: 14px; color: var(--text-2); margin-bottom: 14px; }
+.pro-online { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; border-radius: 50px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: #166534; margin-bottom: 18px; }
+.pro-online span { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: blink 2s infinite; }
+.pro-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.pro-tag { background: var(--green-light); color: var(--green-dark); border-radius: 50px; padding: 5px 14px; font-size: 12px; font-weight: 600; }
+.pay-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.pay-tab { flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; color: var(--text-2); }
+.pay-tab.act-mtn { border-color: #fcd34d; background: #fffde7; color: #78350f; }
+.pay-tab.act-wave { border-color: #90caf9; background: #e3f2fd; color: #0d47a1; }
+.pay-panel { border-radius: var(--radius-sm); padding: 16px; }
+.pay-panel.mtn { background: #fffde7; border: 1px solid #fcd34d; }
+.pay-panel.wave { background: #e3f2fd; border: 1px solid #90caf9; display: none; }
+.pay-num-row { display: flex; align-items: center; justify-content: space-between; background: white; border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 10px; }
+.pay-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; letter-spacing: .04em; }
+.copy-btn { border: none; border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.copy-btn.mtn { background: #f59e0b; color: white; border: 1px solid #fcd34d; }
+.copy-btn.wave { background: #1565c0; color: white; border: 1px solid #90caf9; }
+.pay-steps-txt { font-size: 12px; line-height: 1.7; }
+.pay-steps-txt.mtn { color: #92400e; }
+.pay-steps-txt.wave { color: #1565c0; }
+.copied-msg { display: none; text-align: center; font-size: 12px; color: #16a34a; font-weight: 600; margin: 6px 0; }
+.wa-consult { width: 100%; background: var(--green); color: white; border: none; border-radius: 50px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; transition: all .2s; }
+.wa-consult:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,158,110,.3); }
+
+/* DONS */
+.dons-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+.don-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.don-btn { padding: 13px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: white; font-size: 14px; font-weight: 600; color: var(--text-2); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+.don-btn:hover { border-color: var(--green); color: var(--green); }
+.don-btn.sel { border-color: var(--green); background: var(--green-light); color: var(--green-dark); }
+.don-method { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; transition: all .15s; background: white; }
+.don-method:hover, .don-method.sel { border-color: var(--green); background: var(--green-light); }
+.don-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.don-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); margin-left: auto; flex-shrink: 0; transition: all .15s; }
+.don-method.sel .don-radio { border-color: var(--green); background: var(--green); }
+.don-steps { display: none; background: var(--green-light); border: 1px solid var(--green-mid); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; font-size: 13px; color: var(--green-dark); line-height: 1.8; }
+.wave-box { display: none; background: #e3f2fd; border: 1px solid #90caf9; border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; }
+.confirm-don { width: 100%; background: var(--green); color: white; border: none; border-radius: 50px; padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .2s; }
+.confirm-don:hover { background: var(--green-dark); transform: translateY(-2px); }
+
+/* FOOTER */
+footer { background: var(--text); padding: 60px 5vw 30px; }
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: white; margin-bottom: 12px; }
+.footer-logo span { color: var(--green); }
+.footer-desc { font-size: 14px; color: rgba(255,255,255,.45); line-height: 1.7; max-width: 280px; }
+.footer-col h4 { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 14px; color: rgba(255,255,255,.55); text-decoration: none; margin-bottom: 10px; transition: color .2s; }
+.footer-col a:hover { color: white; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-bottom p { font-size: 13px; color: rgba(255,255,255,.3); }
+.wa-footer { display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 9px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background .2s; }
+.wa-footer:hover { background: #1da851; }
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  .hero-inner, .search-layout, .conseil-layout, .dons-layout { grid-template-columns: 1fr; gap: 48px; }
+  .hero-visual { display: none; }
+  .hero { min-height: auto; padding: 110px 5vw 60px; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  section { padding: 70px 5vw; }
+  .nav-links, .nav-cta { display: none; }
+  .nav-toggle { display: flex; }
+  nav.open .nav-links { display: flex; flex-direction: column; position: fixed; top: 70px; left: 0; right: 0; background: white; padding: 20px; border-bottom: 1px solid var(--border); gap: 16px; align-items: flex-start; z-index: 99; }
+  nav.open .nav-cta { display: block; }
+  .footer-top { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .hero-actions { flex-direction: column; }
+  .btn-primary, .btn-secondary { justify-content: center; }
+}
+
+/* ANIMATIONS */
+.fade-up { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+.fade-up.in { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 7.5C19 11.09 16.09 14 12.5 14C8.91 14 6 11.09 6 7.5C6 3.91 8.91 1 12.5 1C16.09 1 19 3.91 19 7.5Z"/><path d="M12.5 14V23"/><path d="M9 18h7"/></svg></div>
+    <span class="nav-logo-text">Pharma<span>Link</span> CI</span>
+  </a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#recherche">Rechercher</a>
+    <a href="#conseil">Conseil pro</a>
+    <a href="#dons">Soutenir</a>
+  </div>
+  <a href="#recherche" class="nav-cta">Trouver un médicament</a>
+  <button class="nav-toggle" onclick="document.getElementById('nav').classList.toggle('open')" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span></span>Disponible partout en Côte d'Ivoire</div>
+      <h1>Du mal à trouver un <em>médicament</em> ? Contactez-nous !</h1>
+      <p>PharmaLink CI vous aide à localiser vos médicaments et cosmétiques en rupture, et vous met en contact avec un professionnel de santé.</p>
+      <div class="hero-actions">
+        <a href="#recherche" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Rechercher un produit
+        </a>
+        <a href="#conseil" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.55 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 6 6l.88-.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.5 16z"/></svg>
+          Consulter un pro
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-pill top">✅ +200 médicaments localisés</div>
+      <div class="hero-card">
+        <div class="hero-card-title">💊 Dernières recherches</div>
+        <div class="hero-stat"><div class="hero-stat-icon" style="background:var(--green-light);">💊</div><div><h4>Amoxicilline 500mg</h4><p>Localisé · Abidjan Plateau</p></div></div>
+        <div class="hero-stat"><div class="hero-stat-icon" style="background:var(--amber-light);">✨</div><div><h4>Shea Moisture Curl Cream</h4><p>Trouvé · Cocody</p></div></div>
+        <div class="hero-stat"><div class="hero-stat-icon" style="background:var(--blue-light);">💊</div><div><h4>Insuline Lantus</h4><p>En cours de recherche…</p></div></div>
+      </div>
+      <div class="floating-pill bot">⭐ Service rapide & fiable</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="bg-surface" id="services">
+  <div class="container">
+    <div class="section-head center fade-up">
+      <div class="section-label">Ce qu'on fait</div>
+      <h2 class="section-title">Tout ce dont vous avez <em>besoin</em></h2>
+      <p class="section-sub">De la recherche de médicaments introuvables au conseil professionnel, PharmaLink CI vous accompagne.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card fade-up" onclick="location.href='#recherche'"><div class="svc-icon g">💊</div><h3>Médicaments en rupture</h3><p>Vous ne trouvez pas votre médicament ? Envoyez votre liste, notre équipe le localise via notre réseau de grossistes et pharmacies.</p><div class="svc-link">Rechercher <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div>
+      <div class="svc-card fade-up" onclick="location.href='#recherche'"><div class="svc-icon a">✨</div><h3>Cosmétiques rares</h3><p>Produits capillaires, soins du visage, marques difficiles à trouver en CI — on les localise pour vous.</p><div class="svc-link">Rechercher <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div>
+      <div class="svc-card fade-up" onclick="location.href='#conseil'"><div class="svc-icon b">👨‍⚕️</div><h3>Conseil professionnel</h3><p>Besoin d'un avis sur un médicament ? Consultez un professionnel de santé directement sur WhatsApp après paiement.</p><div class="svc-link">Consulter <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div>
+      <div class="svc-card fade-up" onclick="location.href='#dons'"><div class="svc-icon g">❤️</div><h3>Soutenir PharmaLink</h3><p>Satisfait du service ? Votre don nous aide à améliorer la plateforme et aider encore plus de personnes.</p><div class="svc-link">Faire un don <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT ÇA MARCHE -->
+<section>
+  <div class="container">
+    <div class="section-head center fade-up"><div class="section-label">Simple & rapide</div><h2 class="section-title">Comment ça <em>marche</em> ?</h2></div>
+    <div class="steps-grid fade-up">
+      <div class="step-card"><div class="step-num">1</div><h3>Ajoutez vos produits</h3><p>Saisissez le nom de vos médicaments ou cosmétiques. Ajoutez une photo si vous avez l'emballage.</p></div>
+      <div class="step-card"><div class="step-num">2</div><h3>Envoyez sur WhatsApp</h3><p>D'un clic, votre liste part directement sur notre WhatsApp avec toutes vos informations.</p></div>
+      <div class="step-card"><div class="step-num">3</div><h3>On recherche pour vous</h3><p>Notre équipe contacte pharmacies et grossistes pour localiser vos produits en CI.</p></div>
+      <div class="step-card"><div class="step-num">4</div><h3>Vous êtes notifié</h3><p>Dès que votre produit est trouvé, vous recevez une réponse sur WhatsApp.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- RECHERCHE -->
+<section class="bg-dark" id="recherche">
+  <div class="container">
+    <div class="search-layout">
+      <div class="fade-up">
+        <div class="section-label">Recherche produits</div>
+        <h2 class="section-title" style="color:white;">Votre liste en <em style="color:var(--green-mid);">quelques clics</em></h2>
+        <p class="section-sub" style="margin-bottom:36px;">Ajoutez plusieurs produits à la fois et envoyez tout en un seul message WhatsApp.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.75);font-size:15px;"><div style="width:32px;height:32px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</div>Médicaments & cosmétiques</div>
+          <div style="display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.75);font-size:15px;"><div style="width:32px;height:32px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</div>Ajout de photos de l'emballage</div>
+          <div style="display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.75);font-size:15px;"><div style="width:32px;height:32px;background:rgba(255,255,255,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">✓</div>Réponse rapide par WhatsApp</div>
+        </div>
+      </div>
+      <div class="search-form fade-up">
+        <div class="tab-row">
+          <button class="tab active" id="tab-med" onclick="switchTab('med')">💊 Médicaments</button>
+          <button class="tab" id="tab-cos" onclick="switchTab('cos')">✨ Cosmétiques</button>
+        </div>
+        <div class="field"><label>Nom du produit</label><input id="prod-name" class="inp" type="text" placeholder="Ex: Amoxicilline 500mg…"></div>
+        <div class="field"><label>Précision (optionnel)</label><input id="prod-detail" class="inp" type="text" placeholder="Dosage, quantité, marque…"></div>
+        <input type="file" id="prod-photo" accept="image/*" style="display:none;" onchange="previewPhoto(event)">
+        <div class="photo-area" id="photo-btn" onclick="document.getElementById('prod-photo').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Ajouter une photo (optionnel)</p><small>Boîte, ordonnance, emballage…</small>
+        </div>
+        <div id="photo-preview" style="display:none;margin-top:10px;position:relative;">
+          <img id="preview-img" style="width:100%;max-height:130px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border);" src="" alt="">
+          <button onclick="removePhoto()" style="position:absolute;top:6px;right:6px;width:26px;height:26px;background:rgba(0,0,0,.5);border:none;border-radius:50%;cursor:pointer;color:white;font-size:16px;line-height:1;">×</button>
+        </div>
+        <button class="add-btn" onclick="addProduct()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter à la liste
+        </button>
+        <div id="prod-list-wrap" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px;"><span id="prod-count" style="font-size:13px;font-weight:600;color:var(--text-2);"></span><button onclick="clearAll()" style="font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">Tout effacer</button></div>
+          <div id="prod-list"></div>
+          <div class="client-box">
+            <h4>Vos coordonnées</h4>
+            <div class="field"><input id="client-name" class="inp" type="text" placeholder="Votre prénom"></div>
+            <div class="field"><input id="client-phone" class="inp" type="tel" placeholder="Numéro de téléphone"></div>
+            <div class="field" style="margin-bottom:0;"><input id="client-zone" class="inp" type="text" placeholder="Quartier / Ville"></div>
+          </div>
+          <button class="wa-btn" onclick="sendWhatsApp()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L.057 23.428a.5.5 0 0 0 .609.61l5.635-1.476A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.524-5.21-1.435l-.374-.225-3.878 1.016 1.034-3.762-.244-.389A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            Envoyer sur WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONSEIL -->
+<section id="conseil">
+  <div class="container">
+    <div class="section-head fade-up"><div class="section-label">Conseil professionnel</div><h2 class="section-title">Un expert à votre <em>écoute</em></h2><p class="section-sub">Consultez un professionnel de santé directement sur WhatsApp. Service payant, confidentiel et disponible rapidement.</p></div>
+    <div class="conseil-layout">
+      <div class="fade-up">
+        <div class="disclaimer">
+          <div class="dis-head"><span style="font-size:16px;">ℹ️</span><span>Informations importantes</span></div>
+          <div class="dis-body">
+            <div class="dis-point"><div class="dis-num r">1</div><p>Les conseils sur les <strong style="color:#b91c1c;">médicaments abortifs</strong> ne sont pas pris en charge.</p></div>
+            <div class="dis-point"><div class="dis-num a">2</div><p>Si vous êtes malade ou en urgence, <strong style="color:#92400e;">rendez-vous dans un centre de santé</strong> ou appelez le SAMU.</p></div>
+            <div class="dis-point"><div class="dis-num g">3</div><p>Le professionnel se réserve le droit de <strong style="color:var(--green-dark);">refuser une demande</strong> selon son éthique professionnelle.</p></div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;">
+          <h4 style="font-family:'Fraunces',serif;font-size:18px;margin-bottom:16px;">Comment ça marche ?</h4>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;gap:12px;"><div style="width:28px;height:28px;min-width:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">1</div><p style="font-size:14px;color:var(--text-2);line-height:1.5;padding-top:4px;">Choisissez votre mode de paiement et copiez le numéro</p></div>
+            <div style="display:flex;gap:12px;"><div style="width:28px;height:28px;min-width:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">2</div><p style="font-size:14px;color:var(--text-2);line-height:1.5;padding-top:4px;">Effectuez le paiement via MTN MoMo ou Wave</p></div>
+            <div style="display:flex;gap:12px;"><div style="width:28px;height:28px;min-width:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;">3</div><p style="font-size:14px;color:var(--text-2);line-height:1.5;padding-top:4px;">Cliquez sur le bouton WhatsApp — votre message est envoyé automatiquement</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="pro-card fade-up">
+        <div class="pro-avatar">KS</div>
+        <div class="pro-name">Dr. Kouablé Bi Serge</div>
+        <div class="pro-title">Professionnel de santé</div>
+        <div class="pro-online"><span></span>Disponible sur WhatsApp</div>
+        <div class="pro-tags"><span class="pro-tag">Médicaments</span><span class="pro-tag">Cosmétiques</span><span class="pro-tag">Conseil santé</span><span class="pro-tag">Posologie</span></div>
+        <div class="pay-tabs">
+          <button class="pay-tab act-mtn" id="ptab-mtn" onclick="switchPayTab('mtn')">🟡 MTN MoMo</button>
+          <button class="pay-tab" id="ptab-wave" onclick="switchPayTab('wave')">🔵 Wave</button>
+        </div>
+        <div class="pay-panel mtn" id="ppanel-mtn">
+          <div class="pay-num-row" style="border:1px solid #fcd34d;">
+            <div><div style="font-size:11px;color:#92400e;font-weight:600;margin-bottom:3px;">Numéro MTN MoMo</div><div class="pay-num" style="color:#78350f;">05 95 27 22 71</div><div style="font-size:11px;color:#92400e;margin-top:2px;">Dr. Kouablé Bi Serge</div></div>
+            <button class="copy-btn mtn" id="mtn-copy" onclick="copyNum('mtn')">📋 Copier</button>
+          </div>
+          <div class="copied-msg" id="mtn-copied">✅ Numéro copié !</div>
+          <div class="pay-steps-txt mtn">1. Composez <strong>*133#</strong> · 2. Envoyer de l'argent · 3. Collez le numéro · 4. Confirmez</div>
+        </div>
+        <div class="pay-panel wave" id="ppanel-wave">
+          <div class="pay-num-row" style="border:1px solid #90caf9;">
+            <div><div style="font-size:11px;color:#1565c0;font-weight:600;margin-bottom:3px;">Numéro Wave</div><div class="pay-num" style="color:#0d47a1;">05 95 27 22 71</div><div style="font-size:11px;color:#1565c0;margin-top:2px;">Dr. Kouablé Bi Serge</div></div>
+            <button class="copy-btn wave" id="wave-copy" onclick="copyNum('wave')">📋 Copier</button>
+          </div>
+          <div class="copied-msg" id="wave-copied">✅ Numéro copié !</div>
+          <div class="pay-steps-txt wave">1. Ouvrez <strong>Wave</strong> · 2. Appuyez sur Envoyer · 3. Collez le numéro · 4. Confirmez</div>
+        </div>
+        <button class="wa-consult" onclick="ouvrirConseil()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L.057 23.428a.5.5 0 0 0 .609.61l5.635-1.476A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.524-5.21-1.435l-.374-.225-3.878 1.016 1.034-3.762-.244-.389A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          J'ai payé — Démarrer la consultation
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DONS -->
+<section class="bg-surface" id="dons">
+  <div class="container">
+    <div class="dons-layout">
+      <div class="fade-up">
+        <div class="section-label">Soutenir PharmaLink CI</div>
+        <h2 class="section-title">Aidez-nous à <em>grandir</em></h2>
+        <p class="section-sub" style="margin-bottom:36px;">Votre don aide PharmaLink CI à aider plus de personnes à trouver leurs médicaments. Les dons nous permettent également d'améliorer le système pour vous offrir un meilleur service.</p>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div style="display:flex;gap:16px;align-items:flex-start;"><div style="width:52px;height:52px;min-width:52px;background:var(--green-light);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">🌍</div><div><h4 style="font-size:15px;font-weight:600;margin-bottom:4px;">Impact local</h4><p style="font-size:14px;color:var(--text-2);line-height:1.6;">Chaque don contribue à renforcer l'accès aux médicaments en Côte d'Ivoire.</p></div></div>
+          <div style="display:flex;gap:16px;align-items:flex-start;"><div style="width:52px;height:52px;min-width:52px;background:var(--green-light);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">🔧</div><div><h4 style="font-size:15px;font-weight:600;margin-bottom:4px;">Amélioration continue</h4><p style="font-size:14px;color:var(--text-2);line-height:1.6;">Vos dons financent le développement de nouvelles fonctionnalités.</p></div></div>
+        </div>
+      </div>
+      <div class="fade-up">
+        <div style="background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px;">
+          <h3 style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:20px;">Faire un don</h3>
+          <p style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Choisir un montant</p>
+          <div class="don-amounts">
+            <button class="don-btn" id="da-500" onclick="setDon(500)">500 F</button>
+            <button class="don-btn" id="da-1000" onclick="setDon(1000)">1 000 F</button>
+            <button class="don-btn" id="da-2000" onclick="setDon(2000)">2 000 F</button>
+            <button class="don-btn" id="da-5000" onclick="setDon(5000)">5 000 F</button>
+            <button class="don-btn" id="da-10000" onclick="setDon(10000)">10 000 F</button>
+            <button class="don-btn" id="da-0" onclick="setDon(0)">Autre</button>
+          </div>
+          <div id="custom-wrap" style="display:none;margin-bottom:14px;"><input id="custom-amount" class="inp" type="number" placeholder="Montant en FCFA" oninput="updateCustom()"></div>
+          <div style="text-align:center;font-size:13px;color:var(--text-2);margin-bottom:20px;">Montant : <strong id="don-label" style="color:var(--green);font-size:16px;">—</strong></div>
+          <p style="font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Mode de paiement</p>
+          <div class="don-method" id="dm-orange" onclick="selDon('orange')"><div class="don-icon" style="background:#fff3e0;">🟠</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Orange Money</div><div style="font-size:12px;color:var(--text-2);">+225 05 95 27 22 71</div></div><div class="don-radio" id="dr-orange"></div></div>
+          <div class="don-method" id="dm-mtn" onclick="selDon('mtn')"><div class="don-icon" style="background:#fffde7;">🟡</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">MTN MoMo</div><div style="font-size:12px;color:var(--text-2);">+225 05 95 27 22 71</div></div><div class="don-radio" id="dr-mtn"></div></div>
+          <div class="don-method" id="dm-wave" onclick="selDon('wave')"><div class="don-icon" style="background:#e3f2fd;">🔵</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Wave</div><div style="font-size:12px;color:var(--text-2);">+225 05 95 27 22 71</div></div><button id="wave-don-copy" onclick="event.stopPropagation();copyWaveDon()" style="display:none;font-size:11px;font-weight:600;background:#e3f2fd;color:#1565c0;border:1.5px solid #90caf9;border-radius:20px;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:6px;">📋 Copier</button><div class="don-radio" id="dr-wave"></div></div>
+          <div class="don-method" id="dm-moov" onclick="selDon('moov')"><div class="don-icon" style="background:#e8f5e9;">🟢</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Moov Money</div><div style="font-size:12px;color:var(--text-2);">+225 05 95 27 22 71</div></div><div class="don-radio" id="dr-moov"></div></div>
+          <div id="don-steps" class="don-steps"></div>
+          <div id="wave-box" class="wave-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:white;border:1px solid #90caf9;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+              <div><div style="font-size:11px;color:#1565c0;font-weight:600;margin-bottom:2px;">Numéro Wave</div><div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:#0d47a1;">05 95 27 22 71</div></div>
+              <button onclick="copyWaveDon()" id="wave-don-main" style="background:#1565c0;color:white;border:none;border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">📋 Copier</button>
+            </div>
+            <div id="wave-don-copied" style="display:none;text-align:center;font-size:12px;color:#16a34a;font-weight:600;margin-bottom:6px;">✅ Copié ! Ouvrez Wave et collez le numéro.</div>
+            <div style="font-size:12px;color:#1565c0;line-height:1.7;">1. Ouvrez Wave · 2. Envoyer · 3. Collez le numéro · 4. Confirmez</div>
+          </div>
+          <button class="confirm-don" onclick="confirmDon()">❤️ Confirmer mon don</button>
+          <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:10px;">Chaque franc compte. Merci infiniment ! 🙏</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div><div class="footer-logo">Pharma<span>Link</span> CI</div><p class="footer-desc">Votre partenaire santé en Côte d'Ivoire. Nous vous aidons à trouver vos médicaments et produits cosmétiques partout en CI.</p></div>
+      <div class="footer-col"><h4>Services</h4><a href="#recherche">Médicaments</a><a href="#recherche">Cosmétiques</a><a href="#conseil">Conseil pro</a><a href="#dons">Faire un don</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="https://wa.me/2250595272271" target="_blank">WhatsApp</a><a href="#conseil">Dr. Kouablé Bi Serge</a><a href="#">+225 05 95 27 22 71</a></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 PharmaLink CI — Tous droits réservés</p>
+      <a href="https://wa.me/2250595272271" class="wa-footer" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L.057 23.428a.5.5 0 0 0 .609.61l5.635-1.476A11.942 11.942 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.686-.524-5.21-1.435l-.374-.225-3.878 1.016 1.034-3.762-.244-.389A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Nous contacter
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const WA = '2250595272271';
+let tab = 'med', products = [], photo = null, donAmt = 0, donMethod = null;
+
+// Nav scroll
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 20));
+
+// Fade in
+new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.1})
+  .observe(...[...document.querySelectorAll('.fade-up')].map(el => { new IntersectionObserver(([e]) => { if(e.isIntersecting) e.target.classList.add('in'); },{threshold:.1}).observe(el); return el; }));
+
+// Search
+function switchTab(t) {
+  tab = t;
+  document.getElementById('tab-med').classList.toggle('active', t==='med');
+  document.getElementById('tab-cos').classList.toggle('active', t==='cos');
+  document.getElementById('prod-name').placeholder = t==='med' ? 'Ex: Amoxicilline 500mg…' : 'Ex: Shea Moisture Curl Cream…';
+}
+function previewPhoto(e) {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => { photo = ev.target.result; document.getElementById('preview-img').src = ev.target.result; document.getElementById('photo-preview').style.display='block'; document.getElementById('photo-btn').style.borderColor='var(--green)'; document.getElementById('photo-btn').style.background='var(--green-light)'; };
+  r.readAsDataURL(f);
+}
+function removePhoto() { photo=null; document.getElementById('prod-photo').value=''; document.getElementById('photo-preview').style.display='none'; document.getElementById('photo-btn').style.cssText=''; }
+function addProduct() {
+  const name = document.getElementById('prod-name').value.trim();
+  if(!name) { document.getElementById('prod-name').style.borderColor='#ef4444'; setTimeout(()=>document.getElementById('prod-name').style.borderColor='',1500); return; }
+  products.push({name, detail: document.getElementById('prod-detail').value.trim(), type: tab==='med'?'💊':'✨', photo, id: Date.now()});
+  document.getElementById('prod-name').value=''; document.getElementById('prod-detail').value=''; removePhoto(); renderList();
+}
+function removeProduct(id) { products=products.filter(p=>p.id!==id); renderList(); }
+function clearAll() { products=[]; renderList(); }
+function renderList() {
+  const w = document.getElementById('prod-list-wrap');
+  if(!products.length) { w.style.display='none'; return; }
+  w.style.display='block';
+  document.getElementById('prod-count').textContent = products.length+' produit'+(products.length>1?'s':'');
+  document.getElementById('prod-list').innerHTML = products.map((p,i)=>`
+    <div class="prod-item">
+      <div class="prod-num">${i+1}</div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:500;">${p.type} ${p.name}</div>${p.detail?`<div style="font-size:12px;color:var(--text-2);margin-top:2px;">${p.detail}</div>`:''} ${p.photo?`<img src="${p.photo}" style="width:60px;height:46px;object-fit:cover;border-radius:6px;border:1px solid var(--border);margin-top:6px;display:block;">`:''}</div>
+      <button class="prod-del" onclick="removeProduct(${p.id})">×</button>
+    </div>`).join('');
+}
+function sendWhatsApp() {
+  if(!products.length) return;
+  const name=document.getElementById('client-name').value.trim()||'Non renseigné';
+  const phone=document.getElementById('client-phone').value.trim()||'Non renseigné';
+  const zone=document.getElementById('client-zone').value.trim()||'Non renseignée';
+  let msg=`🏥 *Nouvelle demande PharmaLink CI*\n━━━━━━━━━━━━━━━\n👤 *Client :* ${name}\n📞 *Tél :* ${phone}\n📍 *Zone :* ${zone}\n━━━━━━━━━━━━━━━\n📋 *Produits :*\n`;
+  products.forEach((p,i)=>{ msg+=`\n${i+1}. ${p.type} *${p.name}*`; if(p.detail) msg+=`\n   ↳ ${p.detail}`; });
+  const ph=products.filter(p=>p.photo).length;
+  if(ph) msg+=`\n\n📸 *${ph} photo(s)* jointe(s)`;
+  msg+=`\n\n━━━━━━━━━━━━━━━\n_Envoyé via PharmaLink CI_`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// Conseil
+function switchPayTab(t) {
+  const m=t==='mtn';
+  document.getElementById('ppanel-mtn').style.display=m?'block':'none';
+  document.getElementById('ppanel-wave').style.display=m?'none':'block';
+  document.getElementById('ptab-mtn').className='pay-tab'+(m?' act-mtn':'');
+  document.getElementById('ptab-wave').className='pay-tab'+(!m?' act-wave':'');
+}
+function copyNum(t) {
+  navigator.clipboard.writeText('0595272271').then(()=>flashCopy(t)).catch(()=>{fb('0595272271');flashCopy(t);});
+}
+function flashCopy(t) {
+  const msg=document.getElementById(t+'-copied'), btn=document.getElementById(t+'-copy');
+  msg.style.display='block'; btn.textContent='✅ Copié!'; btn.style.background='#16a34a';
+  setTimeout(()=>{ msg.style.display='none'; btn.textContent='📋 Copier'; btn.style.background=t==='mtn'?'#f59e0b':'#1565c0'; },3000);
+}
+function ouvrirConseil() {
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent('Bonjour Dr. Kouablé Bi Serge 👋\n\nJe vous contacte via *PharmaLink CI* pour une consultation professionnelle.\n\nJ\'ai effectué le paiement au *05 95 27 22 71*.\n\nMerci de confirmer la réception pour qu\'on puisse commencer. 🙏')}`,'_blank');
+}
+
+// Dons
+function setDon(v) {
+  document.querySelectorAll('.don-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('custom-wrap').style.display='none';
+  if(v===0){ document.getElementById('da-0').classList.add('sel'); document.getElementById('custom-wrap').style.display='block'; donAmt=0; document.getElementById('don-label').textContent='—'; }
+  else { document.getElementById('da-'+v).classList.add('sel'); donAmt=v; document.getElementById('don-label').textContent=v.toLocaleString('fr-FR')+' FCFA'; }
+}
+function updateCustom() { donAmt=parseInt(document.getElementById('custom-amount').value)||0; document.getElementById('don-label').textContent=donAmt>0?donAmt.toLocaleString('fr-FR')+' FCFA':'—'; }
+function selDon(m) {
+  donMethod=m;
+  ['orange','mtn','wave','moov'].forEach(k=>{ document.getElementById('dm-'+k).classList.toggle('sel',k===m); const r=document.getElementById('dr-'+k); r.style.background=k===m?'var(--green)':''; r.style.borderColor=k===m?'var(--green)':''; });
+  document.getElementById('wave-don-copy').style.display=m==='wave'?'flex':'none';
+  document.getElementById('wave-box').style.display=m==='wave'?'block':'none';
+  const s=document.getElementById('don-steps');
+  if(m==='wave'){s.style.display='none';return;}
+  const steps={orange:'1. Composez <strong>*144#</strong> sur Orange · 2. Transfert d\'argent · 3. Numéro : 05 95 27 22 71 · 4. Confirmez',mtn:'1. Composez <strong>*133#</strong> sur MTN · 2. Envoyer de l\'argent · 3. Numéro : 05 95 27 22 71 · 4. Confirmez',moov:'1. Composez <strong>*555#</strong> sur Moov · 2. Transfert · 3. Numéro : 05 95 27 22 71 · 4. Confirmez'};
+  s.innerHTML=steps[m]||''; s.style.display='block';
+}
+function copyWaveDon() {
+  navigator.clipboard.writeText('0595272271').then(()=>showWaveCopied()).catch(()=>{fb('0595272271');showWaveCopied();});
+}
+function showWaveCopied() {
+  const msg=document.getElementById('wave-don-copied'), btn=document.getElementById('wave-don-main');
+  msg.style.display='block'; btn.textContent='✅ Copié!'; btn.style.background='#16a34a';
+  setTimeout(()=>{ msg.style.display='none'; btn.textContent='📋 Copier'; btn.style.background='#1565c0'; },3000);
+}
+function confirmDon() {
+  if(!donAmt||donAmt<1){alert('Veuillez sélectionner un montant.');return;}
+  if(!donMethod){alert('Veuillez choisir un mode de paiement.');return;}
+  const names={orange:'Orange Money',mtn:'MTN MoMo',wave:'Wave',moov:'Moov Money'};
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`🙏 *Don PharmaLink CI*\n\nJe souhaite faire un don de *${donAmt.toLocaleString('fr-FR')} FCFA* via ${names[donMethod]}.\n\nLes dons aident à améliorer le système pour un meilleur service. Merci pour votre contribution ! 💚`)}`,'_blank');
+}
+function fb(t){const e=document.createElement('textarea');e.value=t;document.body.appendChild(e);e.select();document.execCommand('copy');document.body.removeChild(e);}
+</script>
+</body>
+</html>
